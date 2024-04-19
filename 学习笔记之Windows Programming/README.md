@@ -261,6 +261,33 @@
       return sCLSID;
   ```
 
+## EXCEL
+
+* How to calculate the difference of two timestamp columns ans sort it descending order in excel?
+    * `=IF(G2<>"", G2-F2+(F2>G2), "")`
+    * [How to calculate time difference with milliseconds in Excel?](https://www.extendoffice.com/documents/excel/4693-excel-time-difference-with-milliseconds.html)
+    * [Excel formula: If cell is not blank | Exceljet](https://exceljet.net/formula/if-cell-is-not-blank)
+    * [Fill a formula down into adjacent cells](https://support.microsoft.com/en-us/office/fill-a-formula-down-into-adjacent-cells-041edfe2-05bc-40e6-b933-ef48c3f308c6#ID0EBBF=Web)
+    * [How to Sort and Ignore Blanks in Excel & Google Sheets - Automate Excel](https://www.automateexcel.com/how-to/sort-ignore-blanks/#:~:text=Now%20you%20can%20sort%20the,Filter%20%3E%20Sort%20Largest%20to%20Smallest.)
+* How to replace last occurred "}}" to "}," and append string "test"?
+    * To achieve the task of replacing the last occurrence of "}}" with "}," and then appending the string "test" in an Excel cell, you can use a combination of Excel's built-in functions such as `SUBSTITUTE`, `SEARCH`, `LEN`, and `CONCATENATE` (or `&` for concatenation). Here's a step-by-step approach to creating an Excel formula that accomplishes this:
+    * Sample Excel Formula
+        * Suppose your original text is in cell A1. Here is how you can construct the formula:
+            * `=SUBSTITUTE(A1, "}}", "},", LEN(A1) - LEN(SUBSTITUTE(A1, "}}", "")) / 2) & "test"`
+    * Explanation
+        * `SUBSTITUTE(A1, "}}", "},", LEN(A1) - LEN(SUBSTITUTE(A1, "}}", "")) / 2)`:
+            * `SUBSTITUTE(A1, "}}", "},", <instance_num>)` replaces the specified instance of "}}" in A1 with "},"
+            * `LEN(A1) - LEN(SUBSTITUTE(A1, "}}", ""))` calculates the total length of all "}}" occurrences in A1. By subtracting the length of A1 without "}}" from the total length of A1, you get twice the count of "}}" since each "}}" is two characters long.
+            * Dividing by 2 gives you the number of "}}" occurrences. Using this in the SUBSTITUTE function specifies to replace the last occurrence.
+        * `& "test"`: Concatenates "test" to the end of the string resulting from the SUBSTITUTE function.
+        * This formula is quite efficient but assumes that "}}" does indeed occur in the text. If "}}" might not be present, you might want to add error handling to avoid displaying formula errors:
+        * `=IF(ISERROR(SEARCH("}}", A1)), A1 & "test", SUBSTITUTE(A1, "}}", "},", LEN(A1) - LEN(SUBSTITUTE(A1, "}}", "")) / 2) & "test")`
+    * Error Handling Added
+        * `IF(ISERROR(SEARCH("}}", A1)), A1 & "test", ...)`:
+            * `SEARCH("}}", A1)` looks for "}}" in A1. If "}}" is not found, SEARCH will result in an error.
+            * `IF(ISERROR(...), A1 & "test", ...)` checks if an error occurred (meaning "}}" was not found). If true, it simply appends "test" to the original text. If false, it proceeds with the replacement and appending as described above.
+    * Using this formula allows you to dynamically replace the last occurrence of "}}" with "}," and append "test" to the string in Excel, adjusting appropriately based on whether "}}" is present.
+
 ## MSXML
 
 * [MSXML SDK Overview | Microsoft Docs](https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ms760399(v=vs.85))
@@ -457,12 +484,6 @@
 * How to add host in Windows ?
   * code %windir%\system32\drivers\etc\hosts
   * [Create a new Windows hosts file](https://support.norton.com/sp/en/au/home/current/solutions/v72822654)
-* How to calculate the difference of two timestamp columns ans sort it descending order in excel?
-  * =IF(G2<>"", G2-F2+(F2>G2), "")
-  * [How to calculate time difference with milliseconds in Excel?](https://www.extendoffice.com/documents/excel/4693-excel-time-difference-with-milliseconds.html)
-  * [Excel formula: If cell is not blank | Exceljet](https://exceljet.net/formula/if-cell-is-not-blank)
-  * [Fill a formula down into adjacent cells](https://support.microsoft.com/en-us/office/fill-a-formula-down-into-adjacent-cells-041edfe2-05bc-40e6-b933-ef48c3f308c6#ID0EBBF=Web)
-  * [How to Sort and Ignore Blanks in Excel & Google Sheets - Automate Excel](https://www.automateexcel.com/how-to/sort-ignore-blanks/#:~:text=Now%20you%20can%20sort%20the,Filter%20%3E%20Sort%20Largest%20to%20Smallest.)
 * How to check all environment variables ?
 ```sh
 ls env:
