@@ -50,6 +50,42 @@ namespace attrs = boost::log::attributes;
 namespace keywords = boost::log::keywords;
 ```
 
+### [Tutorial](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial.html)
+
+* In this section we shall walk through the essential steps to get started with the library. After reading it you should be able to initialize the library and add logging to your application. The code of this tutorial is also available in examples residing in the libs/log/examples directory. Feel free to play with them, compile and see the result.
+
+#### [Trivial logging](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial.html#log.tutorial.trivial)
+
+```c++
+#include <boost/log/trivial.hpp>
+
+int main(int, char*[])
+{
+    BOOST_LOG_TRIVIAL(trace) << "A trace severity message";
+    BOOST_LOG_TRIVIAL(debug) << "A debug severity message";
+    BOOST_LOG_TRIVIAL(info) << "An informational severity message";
+    BOOST_LOG_TRIVIAL(warning) << "A warning severity message";
+    BOOST_LOG_TRIVIAL(error) << "An error severity message";
+    BOOST_LOG_TRIVIAL(fatal) << "A fatal severity message";
+
+    return 0;
+}
+```
+
+#### [Trivial logging with filters](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial/trivial_filtering.html)
+
+#### [Setting up sinks](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial/sinks.html)
+
+#### [Creating loggers and writing logs](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial/sources.html)
+
+#### [Adding more information to log: Attributes](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial/attributes.html)
+
+#### [Log record formatting](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial/formatters.html)
+
+#### [Filtering revisited](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial/advanced_filtering.html)
+
+#### [Wide character logging](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial/wide_char.html)
+
 ## [Boost.Python - 1.76.0](https://www.boost.org/doc/libs/1_76_0/libs/python/doc/html/index.html)
 
 * Welcome to Boost.Python, a C++ library which enables seamless interoperability between C++ and the Python programming language. The library includes support for:
