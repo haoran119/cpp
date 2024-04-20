@@ -5,6 +5,7 @@
     * [Boost Getting Started on Windows - 1.77.0](https://www.boost.org/doc/libs/1_77_0/more/getting_started/windows.html)
     * [Boost Downloads](https://www.boost.org/users/download/)
     * [Invocation](https://www.boost.org/build/doc/html/bbv2/overview/invocation.html)
+    * [Boost Libraries - 1.85.0](https://www.boost.org/doc/libs/1_85_0/libs/libraries.htm)
 * [c++ - How do you build the x64 Boost libraries on Windows? - Stack Overflow](https://stackoverflow.com/questions/302208/how-do-you-build-the-x64-boost-libraries-on-windows/302257)
 ```sh
 b2 --build-dir=build/x64 address-model=64 threading=multi --build-type=complete --stagedir=./stage/x64
@@ -29,6 +30,25 @@ b2 --build-dir=build/x64 address-model=64 threading=multi --build-type=complete 
             * The server maps a shared memory in its address space and also gets access to a synchronization mechanism. The server obtains exclusive access to the memory using the synchronization mechanism and copies the file to memory.
             * The client maps the shared memory in its address space. Waits until the server releases the exclusive access and uses the data.
         * Using shared memory, we can avoid two data copies, but we have to synchronize the access to the shared memory segment.
+
+## [Boost.Log v2 - 1.85.0](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/index.html)
+
+### [Introduction](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/index.html#log.intro)
+
+#### [How to read the documentation](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/index.html#log.intro.how_to_read)
+
+* If this is your first experience with the library, it is recommended to read the [Design overview](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/design.html) section for a first glance at the library's capabilities and architecture. The [Installation](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/installation.html) and [Tutorial](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial.html) sections will help to get started experimenting with the library. The tutorial gives an overview of the library features with sample code snippets. Some tutorial steps are presented in two forms: simple and advanced. The simple form typically describes the most common and easy way to do the task and it is being recommended to be read by new users. The advanced form usually gives an expanded way to do the same thing but with an in-depth explanation and the ability to do some extra customization. This form may come in handy for more experienced users and should generally be read if the easy way does not satisfy your needs.
+* Besides the tutorial there is a [Detailed features description](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/detailed.html) chapter. This part describes other tools provided by the library that were not covered by the tutorial. This chapter is best read on a case by case basis.
+* Last, but not least, there is a [Reference](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/reference.html) section which gives the formal description of library component interfaces.
+* To keep the code snippets in this documentation simple, the following namespace aliases are assumed to be defined:
+```c++
+namespace logging = boost::log;
+namespace sinks = boost::log::sinks;
+namespace src = boost::log::sources;
+namespace expr = boost::log::expressions;
+namespace attrs = boost::log::attributes;
+namespace keywords = boost::log::keywords;
+```
 
 ## [Boost.Python - 1.76.0](https://www.boost.org/doc/libs/1_76_0/libs/python/doc/html/index.html)
 
