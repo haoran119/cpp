@@ -582,4 +582,48 @@ BOOST_PYTHON_MODULE(example)
 }
 ```
 
+## FAQ
+
+### ERROR
+
+* linux undefined symbol: _ZTIN5boost10filesystem16filesystem_errorE ?
+    * The error undefined symbol: _ZTIN5boost10filesystem16filesystem_errorE indicates that the linker is unable to resolve a symbol related to the Boost Filesystem library. This symbol corresponds to the type information for the boost::filesystem::filesystem_error exception class. This typically happens when the Boost Filesystem library is not correctly linked during the compilation of your application.
+    * How to Resolve This Error
+        * To fix this issue, you will need to ensure that your project is correctly linking against the Boost Filesystem library, and that your build environment is properly set up to find and use the Boost libraries. Here’s how you can address this:
+        * 1. Install Boost Correctly
+            * First, ensure that Boost is correctly installed on your system. Boost can be installed from source or through your distribution’s package manager.
+            * From Source: Download the latest Boost library from Boost.org and follow the installation instructions. Typically, you will need to run ./bootstrap.sh and then ./b2 to build and install.
+            * Package Manager:
+                * On Debian/Ubuntu: sudo apt-get install libboost-all-dev
+                * On Fedora/CentOS: sudo dnf install boost-devel (Fedora), sudo yum install boost-devel (CentOS)
+        * 2. Linking Boost Filesystem
+            * You need to explicitly link the Boost Filesystem library in your compilation command. This is usually done by adding -lboost_filesystem along with -lboost_system since Boost Filesystem depends on Boost System.
+            * Here’s how you might compile a C++ program using Boost Filesystem:
+            ```sh
+            g++ -o my_app my_app.cpp -lboost_filesystem -lboost_system
+            ```
+            * Ensure that you are linking against the right versions of these libraries, and that they are in your linker's search path. If they are installed in a non-standard location, you may need to specify the path using `-L/path/to/boost/libs`.
+        * 3. Specifying Include and Library Paths
+            * If Boost is installed in a custom directory, you will need to specify the include and library paths in your compilation command:
+            ```sh
+            g++ -o my_app my_app.cpp -I/path/to/boost/include -L/path/to/boost/lib -lboost_filesystem -lboost_system
+            ```
+        * 4. Dynamic vs. Static Linking
+            * If you are using static linking rather than dynamic linking, make sure that you have built the static libraries of Boost and specify them accordingly in your linker flags. Sometimes you might need to define BOOST_ALL_NO_LIB to prevent auto-linking of the wrong library type.
+        * 5. Ensure Correct Compilation Order
+            * Sometimes, the order of libraries in the linking command matters. Generally, list your dependencies after your objects and sources:
+            ```sh
+            g++ -o my_app my_app.cpp -lboost_filesystem -lboost_system
+            ```
+        * 6. Check for ABI Compatibility
+            * Make sure that all your libraries and your own application are compiled with the same version of the compiler, using compatible ABI settings (e.g., using the same C++ standard library, same compiler flags like -std=c++11).
+    * Debugging Further
+        * If the issue persists:
+            * Use `ldd` on Linux to check dynamic libraries dependencies.
+            * Use `nm` to check for symbols in the libraries:
+            ```sh
+            nm -C libboost_filesystem.so | grep filesystem_error
+            ```
+            * This will help verify that the symbol is indeed in the Boost Filesystem library.
+
 # END
