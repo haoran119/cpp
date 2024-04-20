@@ -19473,7 +19473,7 @@ std::string exec(const char* cmd) {
 		* 3.把加密的 DLL 文件解密到内存缓冲区中
 		* 4. Linux 操作系统怎么办？
 
-### ERROR FIX
+### ERROR
 
 * How to fix `error C1853: '.pch' precompiled header file is from a previous version of the compiler, or the precompiled header is C++ and you are using it from C (or vice versa)` ?
 	* Rebuild All
@@ -19608,5 +19608,46 @@ static void construct(PyObject* object, boost::python::converter::rvalue_from_py
 	* [c++ - std::filesystem link error on ubuntu 18.10 - Stack Overflow](https://stackoverflow.com/questions/53852684/stdfilesystem-link-error-on-ubuntu-18-10) 
 * How to fix error `**Cannot evaluate function -- may be inlined**` ?
 	* [c++ - Cannot evaluate function -- may be inlined - Stack Overflow](https://stackoverflow.com/questions/22163730/cannot-evaluate-function-may-be-inlined)
+* linux error `undefined reference to dlopen`?
+    * The error undefined reference to 'dlopen' that you're encountering on Linux typically arises during the linking phase of compiling a program that uses the dlopen function from the Dynamic Loading API. This function is part of the libdl library, which provides mechanisms to dynamically load libraries at runtime.
+    * What is dlopen?
+        * dlopen is used to dynamically load a shared library into the application and retrieve a handle that can be used with other dl functions (dlsym, dlclose, etc.). This is particularly useful for applications that need to extend their functionality dynamically or need to choose at runtime which libraries to use.
+    * How to Resolve the Error
+        * To fix this linking error, you need to ensure that the linker is instructed to link against libdl. Here's how to do it:
+        * Using the GCC Compiler
+            * When compiling your program, you need to add -ldl to your GCC command line. This tells GCC to link your program with the libdl library, which contains the implementation for dlopen and other dynamic loading functions.
+            * Here's an example command for compiling a C program that uses dlopen:
+            ```sh
+            gcc -o my_program my_program.c -ldl
+            ```
+            * This command compiles my_program.c into an executable my_program and links it with the libdl library to resolve the dlopen function reference.
+    * Example Code Using dlopen
+        * Here's a very simple example of using dlopen in a C program:
+        ```c
+        #include <stdio.h>
+        #include <dlfcn.h>
+        
+        int main() {
+            void* handle = dlopen("libm.so.6", RTLD_LAZY);
+            if (!handle) {
+                fprintf(stderr, "Error opening library: %s\n", dlerror());
+                return 1;
+            }
+        
+            dlclose(handle);
+            return 0;
+        }
+        ```
+    * Compile and Run the Example
+        * To compile the above program, use the following command:
+        ```sh
+        gcc -o dynamic_loader_example dynamic_loader_example.c -ldl
+        ```
+        * This will produce an executable named dynamic_loader_example that when run, attempts to dynamically load the math library (libm.so.6). Make sure you change "libm.so.6" to a library that exists on your system if it's different.
+    * Common Mistakes and Considerations
+        * Order of Linker Flags: Make sure that the -ldl flag comes after the source files and other flags that might generate or require linking. The order of parameters in GCC can affect the linking process.
+        * Conditional Use: If your software needs to compile on systems where libdl is not necessary (like BSD systems where the dlopen functionality is part of the standard C library), you may need to conditionally compile/link this library. This can be managed using preprocessor directives or build system conditions.
+        * Check Library Paths: On some systems, library paths or names might be different, or additional configuration might be required to locate the libdl library.
+    * By following these guidelines, you should be able to resolve the `undefined reference to 'dlopen'` error and successfully compile and link your applications that use dynamic loading APIs on Linux.
 
 # END
