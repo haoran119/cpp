@@ -4,8 +4,8 @@
     * Boost provides free peer-reviewed portable C++ source libraries.
     * [Boost Getting Started on Windows - 1.77.0](https://www.boost.org/doc/libs/1_77_0/more/getting_started/windows.html)
     * [Boost Downloads](https://www.boost.org/users/download/)
-    * [Invocation](https://www.boost.org/build/doc/html/bbv2/overview/invocation.html)
     * [Boost Libraries - 1.85.0](https://www.boost.org/doc/libs/1_85_0/libs/libraries.htm)
+    * [Invocation](https://www.boost.org/build/doc/html/bbv2/overview/invocation.html)
 * [c++ - How do you build the x64 Boost libraries on Windows? - Stack Overflow](https://stackoverflow.com/questions/302208/how-do-you-build-the-x64-boost-libraries-on-windows/302257)
 ```sh
 b2 --build-dir=build/x64 address-model=64 threading=multi --build-type=complete --stagedir=./stage/x64
@@ -586,6 +586,35 @@ BOOST_PYTHON_MODULE(example)
 
 ### ERROR
 
+* `libboost_atomic-vc142-mt-gd-x64-1_76.lib` v.s. `libboost_atomic-vc142-mt-x64-1_76.lib` ?
+   * The difference between the two Boost library filenames you provided, `libboost_atomic-vc142-mt-gd-x64-1_76.lib` and `libboost_atomic-vc142-mt-x64-1_76.lib`, reflects different build configurations used for compiling the Boost libraries. These naming conventions convey important information about how each library was compiled, including compiler version, threading support, debug status, and architecture. Here's a breakdown of each component in the filenames and what they indicate:
+   * Breakdown of Boost Library Filenames
+      * 1. `libboost_atomic-vc142-mt-gd-x64-1_76.lib`
+         * libboost_atomic: The name of the Boost library, in this case, Boost.Atomic.
+         * vc142: Compiled with Microsoft Visual C++ compiler version 14.2, which corresponds to Visual Studio 2019.
+         * mt: Uses multithreading. The mt tag indicates that the library is built with multithreading enabled and links to the multithreaded version of the runtime library.
+         * gd:
+            * g: Compiled with debugging symbols. This includes additional debug information which helps during debugging but increases the size of the binary.
+            * d: Linked against a debug version of the Microsoft runtime libraries (/MDd or /MTd depending on whether it is dynamic or static). This is crucial for debugging applications as it uses the debug heap and other debug facilities.
+         * x64: Built for 64-bit architectures.
+         * 1_76: The version of the Boost library, in this case, version 1.76.
+      * 2. `libboost_atomic-vc142-mt-x64-1_76.lib`
+         * libboost_atomic: The name of the Boost library, Boost.Atomic.
+         * vc142: Compiled with Microsoft Visual C++ compiler version 14.2 (Visual Studio 2019).
+         * mt: Multithreaded support is enabled.
+         * x64: Built for 64-bit architectures.
+         * 1_76: Version 1.76 of the Boost library.
+      * Note: The absence of gd or d indicates that this is a release version without debug symbols and linked against the release version of the Microsoft runtime libraries (/MD or /MT).
+   * Choosing the Right Library
+      * Debugging: When you are developing and debugging your application, you should link against the debug versions of libraries (e.g., libboost_atomic-vc142-mt-gd-x64-1_76.lib). These libraries are compiled with debug information and linked against debug versions of runtime libraries, which offer debugging facilities like checks for memory leaks, use of uninitialized memory, etc.
+      * Release: For production releases, use the release versions of libraries (e.g., libboost_atomic-vc142-mt-x64-1_76.lib). These are optimized for performance and size, and do not include debug information, making them faster and smaller.
+   * Configuring Your Project
+      * In Visual Studio, you can set up your project properties to automatically link the appropriate library based on the current configuration:
+         * Go to Project Properties.
+         * Under Configuration Properties, go to C/C++ -> General and add the appropriate directories to the Additional Include Directories for Boost headers.
+         * Under Linker -> General, add the directories containing the Boost libraries to the Additional Library Directories.
+         * Under Linker -> Input, add the specific Boost libraries to the Additional Dependencies field, possibly using different settings for debug and release configurations.
+   * By correctly configuring your development environment and choosing the appropriate library versions for different stages of your development cycle, you can leverage Boost's capabilities effectively while ensuring that your application remains robust and optimized.
 * `libboost_log-vc142-mt-x64-1_76.lib(*.obj) : error LNK2038: mismatch detected for '_ITERATOR_DEBUG_LEVEL': value '0' doesn't match value '2' in *.obj` ?
     * The error `LNK2038: mismatch detected for '_ITERATOR_DEBUG_LEVEL': value '0' doesn't match value '2'` in a Visual Studio project indicates a mismatch between the iterator debug level settings used to compile different parts of your application. This mismatch typically arises when some components (like your own code) are compiled in Debug mode (which sets _ITERATOR_DEBUG_LEVEL to 2), while others (like precompiled libraries, in this case, Boost) are compiled in Release mode (which sets _ITERATOR_DEBUG_LEVEL to 0). Here's how you can resolve this issue:
     * Understanding the Error
