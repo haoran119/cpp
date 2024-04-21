@@ -586,7 +586,34 @@ BOOST_PYTHON_MODULE(example)
 
 ### ERROR
 
-* linux undefined symbol: _ZTIN5boost10filesystem16filesystem_errorE ?
+* `libboost_log-vc142-mt-x64-1_76.lib(*.obj) : error LNK2038: mismatch detected for '_ITERATOR_DEBUG_LEVEL': value '0' doesn't match value '2' in *.obj` ?
+    * The error `LNK2038: mismatch detected for '_ITERATOR_DEBUG_LEVEL': value '0' doesn't match value '2'` in a Visual Studio project indicates a mismatch between the iterator debug level settings used to compile different parts of your application. This mismatch typically arises when some components (like your own code) are compiled in Debug mode (which sets _ITERATOR_DEBUG_LEVEL to 2), while others (like precompiled libraries, in this case, Boost) are compiled in Release mode (which sets _ITERATOR_DEBUG_LEVEL to 0). Here's how you can resolve this issue:
+    * Understanding the Error
+        * _ITERATOR_DEBUG_LEVEL = 2: This setting is used when compiling with Debug configuration in Visual Studio. It enables various checks for iterators to help catch bugs, but it also makes the code slower.
+        * _ITERATOR_DEBUG_LEVEL = 0: This setting is used in Release mode. It turns off iterator debugging features for better performance.
+        * The mismatch happens if you link libraries compiled with different settings of _ITERATOR_DEBUG_LEVEL. This is not allowed because it can lead to runtime errors.
+    * Steps to Resolve the Issue
+        * 1. Consistent Configuration Settings
+            * Ensure that all parts of your project and all linked libraries are compiled with the same configuration settings (either all Debug or all Release). This is the most straightforward way to avoid such mismatches.
+                * Check Project Configuration: Make sure that your project's configuration (Debug/Release) matches that of the linked Boost libraries. If you are in Debug mode, ensure you are linking against Boost libraries compiled in Debug mode.
+        * 2. Rebuild All Components
+            * If you've switched between configurations (e.g., from Debug to Release or vice versa), make sure to rebuild your entire project and all dependencies to ensure all components are compiled with the correct settings.
+            * Clean and Rebuild: Use the "Clean" feature in Visual Studio followed by a "Rebuild All". This ensures there are no old object files with incompatible settings.
+        * 3. Boost Library Configuration
+            * Make sure you have both Debug and Release versions of the Boost libraries available.
+            * Download or Compile the Correct Version: If you don’t have the correct versions, you might need to download them or build them from source. Boost uses different naming conventions to differentiate between Debug and Release builds, e.g., `libboost_log-vc142-mt-gd-x64-1_76.lib` for Debug.
+        * 4. Check Compiler Flags
+            * Verify that the compiler flags related to iterator debugging are consistently set across your project. You can check and set these flags in the C++ project properties:
+                * Open Project Properties.
+                * Navigate to C++ -> Preprocessor.
+                * Make sure that _DEBUG is defined in Debug mode and not defined in Release mode.
+                * Navigate to C++ -> Code Generation.
+                * Ensure that the Runtime Library settings are consistent across all project configurations. Use `/MDd` for Debug and `/MD` for Release.
+        * 5. Use Property Sheets for Consistency
+            * If you are managing a larger solution with multiple projects, consider using property sheets in Visual Studio to ensure consistent settings across all projects.
+    * Conclusion
+        * The `LNK2038` error related to `_ITERATOR_DEBUG_LEVEL` mismatch requires ensuring consistent compilation settings across your entire project and linked libraries. By aligning the Debug/Release configurations and carefully managing compiler settings, you can eliminate such conflicts and ensure a stable build environment. This will prevent linking errors and potential runtime problems due to inconsistencies in the build settings.
+* linux `undefined symbol: _ZTIN5boost10filesystem16filesystem_errorE` ?
     * The error undefined symbol: _ZTIN5boost10filesystem16filesystem_errorE indicates that the linker is unable to resolve a symbol related to the Boost Filesystem library. This symbol corresponds to the type information for the boost::filesystem::filesystem_error exception class. This typically happens when the Boost Filesystem library is not correctly linked during the compilation of your application.
     * How to Resolve This Error
         * To fix this issue, you will need to ensure that your project is correctly linking against the Boost Filesystem library, and that your build environment is properly set up to find and use the Boost libraries. Here’s how you can address this:
