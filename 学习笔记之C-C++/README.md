@@ -363,7 +363,7 @@
     ```
 	* This is an optional rule. It allows you to type 'make clean' at the command line to get rid of your object and executable files. Sometimes the compiler will link or compile files incorrectly and the only way to get a fresh start is to remove all the object and executable files.
 
-###### [GDB](https://en.wikipedia.org/wiki/GNU_Debugger)
+#### [GDB](https://en.wikipedia.org/wiki/GNU_Debugger)
 
 * [GDB (Step by Step Introduction) - GeeksforGeeks](https://www.geeksforgeeks.org/gdb-step-by-step-introduction/)
 * How to debug Core Dumps with GDB in linux ?
@@ -392,6 +392,202 @@
 	* [c++ - Cannot evaluate function -- may be inlined - Stack Overflow](https://stackoverflow.com/questions/22163730/cannot-evaluate-function-may-be-inlined)
 	* [Inline Functions - Debugging with GDB](https://www.zeuthen.desy.de/dv/documentation/unixguide/infohtml/gdb/Inline-Functions.html#:~:text=gdb%20displays%20inlined%20functions%20just,using%20the%20info%20frame%20command.)
 	* [Debugging with GDB](https://docs.adacore.com/gdb-docs/html/gdb.html#Commands)
+
+### [CMAKE](https://cmake.org/)
+
+* CMake: A Powerful Software Build System
+* CMake is the de-facto standard for building C++ code, with over 2 million downloads a month. It’s a powerful, comprehensive solution for managing the software build process. Get everything you need to successfully leverage CMake by visiting our resources section.
+* [Getting Started with CMake](https://cmake.org/getting-started/)
+* [CMake Documentation and Community](https://cmake.org/documentation/)
+* CMake ?
+    * CMake is a powerful cross-platform build system used to manage the build process in a compiler-independent manner. It generates native makefiles and workspaces that can be used in the compiler environment of your choice. The primary goal of CMake is to allow developers to build their applications across different platforms without needing to change the build process setup for each platform.
+    * Key Features of CMake
+        * Cross-platform: CMake can generate build systems for various platforms, including Linux, Windows, macOS, and more.
+        * Out-of-source builds: CMake supports building outside the source directory to keep source directories clean and support multiple builds from a single source tree.
+        * Configurable: CMake allows conditional builds, where parts of the software can be included or excluded based on configuration parameters.
+        * Find packages: CMake can automatically find libraries and packages required for your project, handling include paths and linking settings.
+        * Language support: While primarily used for C and C++, CMake supports languages like Fortran, Java, and others, making it versatile for multi-language projects.
+    * Basic Components
+        * CMakeLists.txt: This is the main file where you define the build process using CMake commands. It specifies project name, version, required libraries, source files, and other metadata.
+        * cmake_minimum_required: Specifies the minimum version of CMake required.
+        * project(): Sets the name and version of the project.
+        * add_executable() or add_library(): Commands to specify which targets (executables or libraries) CMake should generate.
+        * target_link_libraries(): Defines which libraries to link against when building your executables or libraries.
+        * include_directories(): Specifies directories where the compiler should look for header files.
+    * Example CMakeLists.txt
+        * Here’s a simple example of a CMakeLists.txt for a project that creates an executable from two source files:
+        ```cmake
+        cmake_minimum_required(VERSION 3.10)
+        
+        # Set the project name and version
+        project(MyProject VERSION 1.0)
+        
+        # Add an executable with the above sources
+        add_executable(myapp main.cpp utility.cpp)
+        
+        # Specify C++ standard
+        set_target_properties(myapp PROPERTIES
+          CXX_STANDARD 11
+          CXX_STANDARD_REQUIRED YES
+          CXX_EXTENSIONS NO
+        )
+        
+        # Add directory containing Header Files
+        include_directories(include)
+        ```
+    * How to Use CMake
+        * Writing CMakeLists.txt: Define your project and its dependencies in CMakeLists.txt.
+        * Configuring the Project:
+            * Create a build directory (mkdir build && cd build).
+            * Run CMake configuration (cmake .. or cmake -G "Your Generator" ..) to generate makefiles or other build system files specific to your platform.
+        * Building the Project:
+            * Build the project using CMake-generated files (cmake --build . or use your build system directly like make, ninja, etc.).
+        * Running the Executable:
+            * Run your built executable directly from the build directory.
+    * Advanced Features
+        * CPack for Packaging: CMake includes CPack, which can be used to generate installers for your software.
+        * CTest for Testing: Integrated testing support with CTest, which allows you to add tests and perform automated testing as part of your build process.
+        * Compiler and Linker Options: Customize compiler and linker flags based on the needs and optimizations specific to your project.
+    * Conclusion
+        * CMake is an essential tool for modern software development, particularly for projects that need to support multiple platforms. It simplifies the build process by managing the differences in environments internally, allowing developers to focus more on development rather than the build system.
+* specify Unix / Windows / Debug / Release in CMakeLists.txt ?
+    * When developing cross-platform applications with CMake, it's common to need different settings based on the operating system (Unix or Windows) and the build type (Debug or Release). CMake provides mechanisms to handle these distinctions efficiently in your CMakeLists.txt file. Below, I'll show you how to specify settings for different platforms and build types.
+    * Distinguishing Between Unix and Windows
+        * You can use CMake's built-in variables to conditionally compile code or set compiler options depending on the operating system.
+        * Example:
+        ```cmake
+        cmake_minimum_required(VERSION 3.10)
+        project(MyProject)
+        
+        # Set sources
+        set(SOURCES main.cpp)
+        
+        # Check if compiling on Windows
+        if(WIN32)
+            # Windows-specific code
+            set(SOURCES ${SOURCES} win_specific.cpp)
+            add_definitions(-DWINDOWS=1)
+        else()
+            # Unix/Linux-specific code
+            set(SOURCES ${SOURCES} unix_specific.cpp)
+            add_definitions(-DUNIX=1)
+        endif()
+        
+        add_executable(MyProject ${SOURCES})
+        ```
+    * Specifying Debug and Release Settings
+        * You can specify different settings for Debug and Release builds using the CMAKE_BUILD_TYPE variable and related commands.
+        * Example:
+        ```cmake
+        cmake_minimum_required(VERSION 3.10)
+        project(MyProject)
+        
+        # Set the default build type if not specified
+        if(NOT CMAKE_BUILD_TYPE)
+          set(CMAKE_BUILD_TYPE Release)
+        endif()
+        
+        # Set compiler flags
+        set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+        set(CMAKE_CXX_FLAGS_DEBUG "-g")
+        set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+        
+        # Add definitions for debug mode
+        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+            add_definitions(-DDEBUG_MODE=1)
+        endif()
+        
+        add_executable(MyProject main.cpp)
+        ```
+    * Advanced Conditional Settings
+        * For more complex scenarios, especially when dealing with multiple platforms and specific compiler options, you might want to refine your settings further.
+        * Example:
+        ```cmake
+        cmake_minimum_required(VERSION 3.10)
+        project(MyProject)
+        
+        # Check operating system and set files and compiler flags
+        if(WIN32)
+            set(PLATFORM_SOURCES win_main.cpp)
+            if(MSVC)
+                set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+            else()
+                set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+            endif()
+        elseif(UNIX)
+            set(PLATFORM_SOURCES unix_main.cpp)
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+        endif()
+        
+        # Different source files and definitions based on Debug or Release
+        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+            set(SOURCES ${PLATFORM_SOURCES} debug_additional.cpp)
+            add_definitions(-DDEBUG)
+        else()
+            set(SOURCES ${PLATFORM_SOURCES} release_additional.cpp)
+            add_definitions(-DNDEBUG)
+        endif()
+        
+        add_executable(MyProject ${SOURCES})
+        ```
+    * Summary
+        * In CMake, using conditions for platform-specific code and different build types helps create robust and portable build systems. By checking the environment with if statements and using appropriate variables (CMAKE_BUILD_TYPE, WIN32, UNIX, MSVC), you can tailor the build process to match the needs of each platform or configuration:
+            * Use `WIN32`, `UNIX`, and `APPLE` for platform-specific settings.
+            * Use `MSVC`, `GCC`, etc., to check for specific compilers.
+            * Control build behavior with `CMAKE_BUILD_TYPE` and flags like `CMAKE_CXX_FLAGS_DEBUG` and `CMAKE_CXX_FLAGS_RELEASE`.
+        * This method ensures that your project can be built in various environments without changing the source code, just by adjusting the build scripts.
+* target_link_directories / target_link_libraries in CMakeLists.txt ?
+    * In CMake, target_link_directories and target_link_libraries are commands used to specify where to find libraries and which libraries to link against when building a target (like an executable or library). Understanding how to use these commands correctly is crucial for properly configuring the build process of your CMake projects.
+    * target_link_directories
+        * Introduced in CMake 3.13, the target_link_directories command specifies the directories where the linker should look for libraries to link against a target. This command is used to add link directories to a target.
+        * Syntax
+            ```cmake
+            target_link_directories(<target>
+                [BEFORE|AFTER]
+                [PUBLIC|PRIVATE|INTERFACE]
+                <directories>...
+            )
+            ```
+            * `<target>`: The target (executable or library) that the link directories apply to.
+            * `[BEFORE|AFTER]`: Optional. Specifies whether the directories should be added before or after the existing directories in the linker search path.
+            * `[PUBLIC|PRIVATE|INTERFACE]`: Specifies the scope of the directories.
+               * `PUBLIC`: The directories are added to the link directories for the target and will also be used in the link step of any targets that link to this target.
+               * `PRIVATE`: The directories are used only in the link step for this target.
+               * `INTERFACE`: The directories are not used for this target but are used for targets linking to this target.
+            * `<directories>`: One or more directories to add to the linker search path.
+        * Example
+            ```cmake
+            add_executable(MyApp main.cpp)
+            target_link_directories(MyApp PRIVATE ${CMAKE_SOURCE_DIR}/libs)
+            ```
+    * target_link_libraries
+        * The target_link_libraries command is used to specify which libraries a target should be linked against. This is one of the most commonly used commands in CMake for managing library dependencies.
+        * Syntax
+            ```cmake
+            target_link_libraries(<target>
+                <item>...
+                [<PRIVATE|PUBLIC|INTERFACE> <item>...]...
+            )
+            ```
+            * `<target>`: The target that needs to link against the specified libraries.
+            * `<item>`: Specifies a library to link against. This can be a target name or a library file.
+            * `[PRIVATE|PUBLIC|INTERFACE]`: Specifies the scope similar to target_link_directories.
+                * `PRIVATE`: Libraries are linked only to the specified target.
+                * `PUBLIC`: Libraries are linked to the specified target and also to targets that link this target.
+                * `INTERFACE`: Libraries are linked not to the specified target but to targets that link this target.
+        * Example
+            ```cmake
+            add_library(MyLibrary STATIC IMPORTED)
+            set_property(TARGET MyLibrary PROPERTY IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/libs/mylibrary.lib)
+            
+            add_executable(MyApp main.cpp)
+            target_link_libraries(MyApp PRIVATE MyLibrary)
+            ```
+    * Best Practices
+        * Prefer target-specific commands: Using target_link_directories and target_link_libraries allows for more precise and maintainable handling of library dependencies compared to using directory-based commands like link_directories, which apply globally.
+        * Scope specification: Always specify the scope (PRIVATE, PUBLIC, INTERFACE) explicitly to make your CMake files clearer and to ensure proper encapsulation of dependencies.
+        * Use absolute paths: When possible, specify absolute paths to libraries and link directories to avoid relative path issues, especially when the build directory structure may vary.
+    * Using these commands correctly helps ensure that your project's build configuration is robust, portable, and easy to maintain. This makes it easier to manage complex projects with multiple dependencies across different platforms and build environments.
 
 ## [C++ language](https://en.cppreference.com/w/cpp/language)
 
