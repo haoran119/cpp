@@ -19573,6 +19573,42 @@ static void construct(PyObject* object, boost::python::converter::rvalue_from_py
 * How to fix `error LNK2019: unresolved external symbol __imp__UuidCreate@4` ?
 	* Under Project menu, open <project name> Properties -> Configuration Properties -> Linker -> Command Line. Type Rpcrt4.lib into the Additional Options box.
 	* [How to Link with .lib file -- UuidCreate()](https://forums.codeguru.com/showthread.php?448070-How-to-Link-with-lib-file-UuidCreate())
+* Error `LNK2019: unresolved external symbol deflate referenced in function` ?
+    * The error `LNK2019: unresolved external symbol deflate referenced in function` suggests that the linker is unable to find the definition for the deflate function, which is a part of the zlib compression library. This typically occurs during the linking stage of building a C++ application that uses zlib for compression tasks. Here’s how to resolve this linker error step by step:
+        * Step 1: Verify zlib Inclusion
+            * Ensure that zlib is properly included in your project. This means:
+                * Including zlib Headers: You must include the zlib headers in your source files where you use zlib functions like deflate. Typically, you include it with:
+                    * `#include <zlib.h>`
+        * Step 2: Link against the zlib Library
+            * The most common cause for this error is not linking against the zlib library correctly. You need to ensure that the zlib library (usually named zlib.lib or zlibstatic.lib on Windows) is linked in your project.
+            * For Visual Studio:
+                * Open the project properties by right-clicking on the project in Solution Explorer and selecting Properties.
+                * Go to Linker -> Input -> Additional Dependencies and add zlib.lib or the appropriate library file for zlib.
+                * Make sure that the path to the zlib library file is included in Linker -> General -> Additional Library Directories.
+            * For a CMake Project:
+                * Add the following in your CMakeLists.txt file:
+                ```cmake
+                find_package(ZLIB REQUIRED)
+                if (ZLIB_FOUND)
+                  include_directories(${ZLIB_INCLUDE_DIRS})
+                  target_link_libraries(YourProjectName ${ZLIB_LIBRARIES})
+                endif()
+                ```
+                * This script automatically handles finding and linking zlib, but ensure that CMake can find zlib (you might need to set ZLIB_ROOT as an environment variable or pass it as a CMake variable).
+        * Step 3: Ensure Correct Library Path
+            * Check that the path to zlib's library file (zlib.lib or similar) is correctly set in your project's settings. This path needs to be accessible to the linker.
+        * Step 4: Rebuild the Project
+            * After ensuring that zlib's headers are included and its library is linked, rebuild your project to see if the issue persists.
+        * Step 5: Check the Library Version
+            * Make sure that the zlib library version is compatible with your application. If you are linking against an old or incompatible version of zlib, it might lead to linking errors.
+        * Step 6: Dependency on the Order of Linking
+            * Sometimes the order in which libraries are linked can cause issues. Ensure zlib is linked after any dependent libraries in your linker settings.
+        * Step 7: Static vs. Dynamic Linking
+            * Consider whether you are linking statically or dynamically:
+                * If you are using a static library (.lib), ensure that all dependent settings are configured for static linking.
+                * If you are using a dynamic library (.dll), ensure that the corresponding .lib file is used during linking, and the .dll is available in your application’s runtime path.
+    * Conclusion
+        * Resolving the `LNK2019` error related to zlib involves ensuring that you have correctly included zlib's headers, linked against its library, and configured your project's library paths properly. Following these steps should help you effectively integrate zlib into your Windows-based C++ projects.
 * How to fix `warning LNK4075: ignoring '/INCREMENTAL' due to '/OPT:ICF' specification` ?
   * Change default to below values in MSVS > Your project property > Linker > Optimization :
     * References = Keep Unreferenced Data (/OPT:NOREF)
