@@ -1037,6 +1037,36 @@ int main(){
 
 #### Source file inclusion (#include)
 
+* C++ `include<>` v.s. `include ""` ?
+    * In C++, the use of angle brackets (<>) and double quotes ("") with the #include directive serves to instruct the preprocessor on where to look for the included files, but they do so in slightly different ways. Understanding these differences can help you organize your project's include files more effectively and avoid common problems related to file inclusion.
+    * `#include with Angle Brackets <>`
+        * When you use angle brackets with the #include directive, you're telling the preprocessor to search for the included file in the system directories that the compiler uses for standard libraries, along with any directories you've specified with the -I option (or its equivalent) when invoking the compiler.
+        * Syntax Example:
+        ```cpp
+        #include <iostream>
+        #include <vector>
+        ```
+        * Usage:
+            * Typically used for including standard library headers or third-party library headers that are located in standard system directories.
+            * The search path for these headers does not normally include the directory containing the current file unless explicitly added as part of the compiler's include path settings.
+    * `#include with Double Quotes ""`
+        * When you use double quotes with the #include directive, the preprocessor searches for the included file starting in the directory containing the current file. If it doesn't find the file there, it then searches the paths that it would normally search for files included with angle brackets.
+        * Syntax Example:
+        ```cpp
+        #include "my_header.h"
+        #include "utils/my_utility.h"
+        ```
+        * Usage:
+            * Typically used for including project-specific headers or local headers that are not part of the system directories.
+            * Starts searching in the current directory of the source file which contains the #include statement, which makes it useful for project-specific or local headers.
+        * Why the Distinction Matters
+            * `Compilation Dependence`: Using double quotes can make your project easier to compile on different systems because it doesn't rely on specific configurations of the system's include paths. It's especially useful for project-specific headers that are not intended to be installed in the system's include directories.
+            * `Encapsulation and Project Structure`: By using double quotes for your own headers and angle brackets for external libraries, you clearly distinguish between external dependencies and internal modules. This can help maintain a clean and well-organized code structure.
+            * `Performance`: In large projects or projects with many directories, correctly using the include style can slightly improve compilation speed, as the preprocessor may find local headers faster with double quotes.
+            * `Portability and Best Practices`: Using angle brackets for standard and third-party libraries reduces the risk of a name conflict with local headers, and using double quotes for local headers reinforces their locality and potential non-reusability.
+    * Summary
+        * Choose `#include "header.h"` when the header is part of your project or closely related code that you manage. Choose `#include <header.h>` for external libraries and the C++ Standard Library to leverage the standard paths set up in your development environment. This practice helps in maintaining clarity in code dependencies and in managing large codebases efficiently.
+
 #### Pragma directive (#pragma)
 
 * [once pragma | Microsoft Docs](https://docs.microsoft.com/en-us/cpp/preprocessor/once?view=msvc-160)
