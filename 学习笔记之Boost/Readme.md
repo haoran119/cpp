@@ -584,8 +584,6 @@ BOOST_PYTHON_MODULE(example)
 
 ## FAQ
 
-### ERROR
-
 * `libboost_atomic-vc142-mt-gd-x64-1_76.lib` v.s. `libboost_atomic-vc142-mt-x64-1_76.lib` ?
    * The difference between the two Boost library filenames you provided, `libboost_atomic-vc142-mt-gd-x64-1_76.lib` and `libboost_atomic-vc142-mt-x64-1_76.lib`, reflects different build configurations used for compiling the Boost libraries. These naming conventions convey important information about how each library was compiled, including compiler version, threading support, debug status, and architecture. Here's a breakdown of each component in the filenames and what they indicate:
    * Breakdown of Boost Library Filenames
@@ -615,6 +613,9 @@ BOOST_PYTHON_MODULE(example)
          * Under Linker -> General, add the directories containing the Boost libraries to the Additional Library Directories.
          * Under Linker -> Input, add the specific Boost libraries to the Additional Dependencies field, possibly using different settings for debug and release configurations.
    * By correctly configuring your development environment and choosing the appropriate library versions for different stages of your development cycle, you can leverage Boost's capabilities effectively while ensuring that your application remains robust and optimized.
+
+### ERROR
+
 * `libboost_log-vc142-mt-x64-1_76.lib(*.obj) : error LNK2038: mismatch detected for '_ITERATOR_DEBUG_LEVEL': value '0' doesn't match value '2' in *.obj` ?
     * The error `LNK2038: mismatch detected for '_ITERATOR_DEBUG_LEVEL': value '0' doesn't match value '2'` in a Visual Studio project indicates a mismatch between the iterator debug level settings used to compile different parts of your application. This mismatch typically arises when some components (like your own code) are compiled in Debug mode (which sets _ITERATOR_DEBUG_LEVEL to 2), while others (like precompiled libraries, in this case, Boost) are compiled in Release mode (which sets _ITERATOR_DEBUG_LEVEL to 0). Here's how you can resolve this issue:
     * Understanding the Error
@@ -642,7 +643,43 @@ BOOST_PYTHON_MODULE(example)
             * If you are managing a larger solution with multiple projects, consider using property sheets in Visual Studio to ensure consistent settings across all projects.
     * Conclusion
         * The `LNK2038` error related to `_ITERATOR_DEBUG_LEVEL` mismatch requires ensuring consistent compilation settings across your entire project and linked libraries. By aligning the Debug/Release configurations and carefully managing compiler settings, you can eliminate such conflicts and ensure a stable build environment. This will prevent linking errors and potential runtime problems due to inconsistencies in the build settings.
-* linux `undefined symbol: _ZTIN5boost10filesystem16filesystem_errorE` ?
+* Linux for static link boost, how to fix the compilation error `in function boost::log::v2s_mt_posix::sinks::anonymous::parse_file_name_pattern(boost::filesystem::path const&, boost::filesystem::path&, boost::filesystem::path&, boost::log::v2s_mt_posix::aux::light_function<std::string (unsigned int)>&)':
+text_file_backend.cpp:(.text+0x5cb): undefined reference to boost::filesystem::path::filename() const` ?
+    * The error you are encountering suggests that your project is not properly linking against the Boost.Filesystem library, which is required by Boost.Log, specifically when Boost.Log tries to use the `boost::filesystem::path::filename()` function. This is a typical scenario when using static linking, where you need to ensure all required static libraries are explicitly linked in the correct order due to dependencies among them.
+    * Here are the steps to resolve the compile error related to static linking of Boost libraries on Linux:
+        * Step 1: Verify Installation and Static Libraries Availability
+            * Ensure that the Boost libraries, including Boost.Filesystem and any other libraries that Boost.Log depends upon (such as Boost.System), are correctly installed on your system. Check that the static library files (typically named libboost_*.a) are present.
+            * You can install Boost from the package manager or build it from source to ensure static libraries are generated:
+            ```bash
+            sudo apt-get install libboost-all-dev  # Debian/Ubuntu
+            sudo yum install boost-devel           # CentOS/RedHat
+            ```
+            * Or compile Boost manually to get static libraries:
+            ```bash
+            ./bootstrap.sh --prefix=/usr/local --with-libraries=log,filesystem,system
+            ./b2 link=static install
+            ```
+        * Step 2: Correctly Link the Boost Libraries
+            * When linking statically, you must ensure all dependencies are correctly specified. For Boost.Log and Boost.Filesystem, you typically need at least Boost.System and possibly Boost.Thread depending on your Boost.Log setup.
+            * Compile and Link Command: Use g++ or clang++ with the appropriate flags. `Note that order matters when linking statically; dependencies should follow dependents`:
+                * `g++ -o my_program my_program.cpp -L/path/to/boost/libs -lboost_log -lboost_filesystem -lboost_system -pthread -static`
+                * Ensure `-static` is used to enforce static linking.
+        * Step 3: Include Directories and Library Paths
+            * Make sure your compiler knows where to find the Boost headers and the static libraries. This involves setting the include path with `-I` and the library path with `-L`.
+            * Example Command:
+                * `g++ -o my_program my_program.cpp -I/usr/local/include -L/usr/local/lib -lboost_log -lboost_filesystem -lboost_system -pthread -static`
+        * Step 4: Resolve Any Order-Specific Linking Issues
+            * `Linking order is crucial in static linking. Libraries that depend on other libraries should come first in the command line`. For example, if Boost.Log depends on Boost.Filesystem and Boost.System, Boost.Log should appear before Boost.Filesystem and Boost.System in the linking order.
+        * Step 5: Check for Missing Dependencies
+            * Static linking might not pull in all required dependencies automatically. If you get errors about undefined references to functions that are part of the standard libraries or other system libraries, you might need to explicitly link against these libraries (like -ldl for the Dynamic Linking Loader or -lrt for real-time extensions on some Linux distributions).
+        * Step 6: Use nm and ldd Tools for Troubleshooting
+            * nm: Use nm on the static libraries to check if the symbols are indeed present:
+                * `nm -C libboost_filesystem.a | grep filename`
+            * ldd: While ldd is for dynamic libraries, checking that no dynamic libraries are pulled in unexpectedly might be useful:
+                * `ldd my_program`
+    * Conclusion
+        * Ensure that all paths are correct, all required libraries are installed, and `the command line for building includes all necessary static libraries in the correct order`. Statically linking Boost libraries in a Linux environment can require careful setup of the build commands to manage dependencies effectively. If issues persist, double-check the Boost library versions and compatibility with your compiler and standard library.
+* linux `undefined symbol: _ZTIN5boost10filesystem16filesystem_errorE` ? 
     * The error undefined symbol: _ZTIN5boost10filesystem16filesystem_errorE indicates that the linker is unable to resolve a symbol related to the Boost Filesystem library. This symbol corresponds to the type information for the boost::filesystem::filesystem_error exception class. This typically happens when the Boost Filesystem library is not correctly linked during the compilation of your application.
     * How to Resolve This Error
         * To fix this issue, you will need to ensure that your project is correctly linking against the Boost Filesystem library, and that your build environment is properly set up to find and use the Boost libraries. Here’s how you can address this:
