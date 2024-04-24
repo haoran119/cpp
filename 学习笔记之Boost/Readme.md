@@ -82,6 +82,62 @@ int main(int, char*[])
 
 #### [Log record formatting](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial/formatters.html)
 
+* If you tried running examples from the previous sections, you may have noticed that only log record messages are written to the files. This is the default behavior of the library when no formatter is set. Even if you added attributes to the logging core or a logger, the attribute values will not reach the output unless you specify a formatter that will use these values.
+* `boost::log::add_file_log`
+    * `boost::log::add_file_log` is a function provided by the Boost.Log library to easily set up a file-based logging sink. This function allows you to direct logging output to one or more files, which can be configured with various options to control the file name, format, rotation, and more. Here's a detailed explanation of how to use this function along with an example.
+    * Requirements
+        * Before using `boost::log::add_file_log`, make sure that:
+            * Boost is properly installed and configured in your project.
+            * You have included the necessary Boost.Log headers and linked against the Boost.Log libraries (libboost_log, libboost_log_setup, libboost_thread, and libboost_system).
+    * Basic Usage
+        * To use add_file_log, you need to include the appropriate header file:
+        ```cpp
+        #include <boost/log/trivial.hpp>
+        #include <boost/log/utility/setup/file.hpp>
+        ```
+        * Here’s a simple example of how to set up file logging with add_file_log:
+        ```cpp
+        #include <boost/log/trivial.hpp>
+        #include <boost/log/utility/setup/file.hpp>
+        #include <boost/log/utility/setup/common_attributes.hpp>
+        #include <boost/log/sources/severity_logger.hpp>
+        #include <boost/log/sources/record_ostream.hpp>
+        
+        void init_logging() {
+            boost::log::register_simple_formatter_factory<boost::log::trivial::severity_level, char>("Severity");
+        
+            // Add a file log
+            boost::log::add_file_log(
+                boost::log::keywords::file_name = "sample_%N.log",  // File name pattern
+                boost::log::keywords::rotation_size = 10 * 1024 * 1024,  // Rotate files every 10 MiB
+                boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0),  // Rotate daily at midnight
+                boost::log::keywords::format = "[%TimeStamp%]: %Message%"  // Log record format
+            );
+        
+            boost::log::add_common_attributes();  // Add common attributes such as timestamp
+        }
+        
+        int main() {
+            init_logging();
+        
+            BOOST_LOG_TRIVIAL(info) << "This is an informational message.";
+        
+            return 0;
+        }
+        ```
+    * Key Options for add_file_log
+        * file_name: Specifies the pattern for the log file names. You can include placeholders like %N which will be replaced by the current log file number.
+        * rotation_size: Determines the file size at which the log file will be rotated.
+        * time_based_rotation: Specifies conditions based on time for rotating the log file. In the example, the file rotates daily at midnight.
+        * format: Defines the format of the log entries. You can customize this format to include various log attributes such as timestamp, severity level, thread ID, etc.
+        * auto_flush: Determines whether each log message is flushed to the disk immediately after being written. This can be set to true or false.
+    * Advanced Setup
+        * You can also set up more advanced features like conditional rotation (e.g., based on file size, time, or logging content), multiple sinks (e.g., also logging to the console), and custom filters (e.g., logging only messages of a certain severity or from certain sources).
+    * Compiling and Linking
+        * When compiling your application, make sure to link against the necessary Boost libraries. Here's an example command if you are using g++:
+            * `g++ -o my_app main.cpp -lboost_log -lboost_log_setup -lboost_thread -lboost_system -lpthread`
+        * This sets up a basic logging mechanism that writes to a file, with log rotation based on file size and time. It’s flexible enough for most applications, and Boost.Log's configurability allows it to be adapted to various complex requirements.
+
 #### [Filtering revisited](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial/advanced_filtering.html)
 
 #### [Wide character logging](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial/wide_char.html)
