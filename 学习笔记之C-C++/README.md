@@ -392,6 +392,48 @@
 	* [c++ - Cannot evaluate function -- may be inlined - Stack Overflow](https://stackoverflow.com/questions/22163730/cannot-evaluate-function-may-be-inlined)
 	* [Inline Functions - Debugging with GDB](https://www.zeuthen.desy.de/dv/documentation/unixguide/infohtml/gdb/Inline-Functions.html#:~:text=gdb%20displays%20inlined%20functions%20just,using%20the%20info%20frame%20command.)
 	* [Debugging with GDB](https://docs.adacore.com/gdb-docs/html/gdb.html#Commands)
+* How to attach to process to debug with gdb on linux ?
+    * To attach to a running process and debug it with GDB (the GNU Debugger) on Linux, you need to follow several steps. This is a common technique used to diagnose issues with processes that are already running, particularly when you can't start the process from within GDB due to it being a service or a daemon. Here’s a step-by-step guide on how to do it:
+    * Step 1: Install GDB
+        * First, make sure that GDB is installed on your Linux system. If it's not installed, you can easily install it using your distribution's package manager:
+        * For Debian/Ubuntu:
+            * `sudo apt-get install gdb`
+        * For Fedora/Red Hat:
+            * `sudo dnf install gdb`
+    * Step 2: Locate the Process ID
+        * You need the process ID (PID) of the application you want to attach to. You can find this by using the ps command along with grep to filter out the specific process. For example, if your application's name includes "myapp", you might use:
+            * `ps aux | grep myapp`
+            * This command will list processes that include "myapp" in their command line. Look for the PID in the output, which is typically the second column.
+    * Step 3: Give Permission to Attach to the Process
+        * Modern Linux systems have a security feature that might prevent GDB from attaching to a process. You may need to change a setting to allow this:
+        * Temporarily allow attaching (safer option):
+            * `echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope`
+            * This change is temporary and resets upon reboot. It's safer because it doesn't permanently reduce system security.
+        * Permanently allow attaching (not recommended for most users):
+            * Modify the file /etc/sysctl.d/10-ptrace.conf or similar, changing the line to kernel.yama.ptrace_scope = 0 and then run:
+                * `sudo sysctl -p /etc/sysctl.d/10-ptrace.conf`
+    * Step 4: Attach GDB to the Process
+        * Now that you have the PID and have permitted debugging, you can attach GDB to the process. Replace 12345 with the actual PID:
+            * `sudo gdb -p 12345`
+            * You need to use sudo if the process is running under a different user from your own or requires higher privileges.
+    * Step 5: Debug the Process
+        * Once attached, GDB will halt the process. You can now perform any typical debugging tasks, such as:
+            * Setting breakpoints
+            * Stepping through code
+            * Inspecting variables
+            * Changing values
+        * Use the GDB command interface to navigate and manipulate the program state. Here are a few useful commands:
+            * c or continue: Continue running the process.
+            * bt or backtrace: Show the call stack.
+            * print var_name: Print the current value of a variable var_name.
+            * set var var_name = value: Set the variable var_name to a new value.
+            * break filename.c:lineno: Set a breakpoint at line number lineno in the file filename.c.
+    * Step 6: Detach and Resume
+        * When you're done debugging, you can detach GDB from the process and let it continue running:
+            * `detach`
+        * Then, exit GDB:
+            * `quit`
+    * These steps allow you to debug a live process on Linux using GDB effectively, providing powerful insights into runtime behavior and facilitating the diagnosis of complex issues.
 
 ### [CMAKE](https://cmake.org/)
 
