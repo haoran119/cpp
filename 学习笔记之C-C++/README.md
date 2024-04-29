@@ -1114,7 +1114,7 @@ int main(){
 * [once pragma | Microsoft Docs](https://docs.microsoft.com/en-us/cpp/preprocessor/once?view=msvc-160)
     * Specifies that the compiler includes the header file only once, when compiling a source code file.
     * Syntax
-        * #pragma once
+        * `#pragma once`
     * Remarks
         * The use of #pragma once can reduce build times, as the compiler won't open and read the file again after the first #include of the file in the translation unit. It's called the multiple-include optimization. It has an effect similar to the include guard idiom, which uses preprocessor macro definitions to prevent multiple inclusions of the contents of the file. It also helps to prevent violations of the one definition rule: the requirement that all templates, types, functions, and objects have no more than one definition in your code.
         * We recommend the include guard idiom when code must be portable to compilers that don't implement the #pragma once directive, to maintain consistency with existing code, or when the multiple-include optimization is impossible. It can occur in complex projects when file system aliasing or aliased include paths prevent the compiler from identifying identical include files by canonical path.
@@ -1127,6 +1127,61 @@ int main(){
         * The C preprocessor processes directives of the form #include \<file> in a source file by locating the associated file on disk and transcluding ("including") its contents into a copy of the source file known as the translation unit, replacing the include directive in the process. The files included in this regard are generally header files, which typically contain declarations of functions and classes or structs. If certain C or C++ language constructs are defined twice, the resulting translation unit is invalid. #include guards prevent this erroneous construct from arising by the double inclusion mechanism.
         * The addition of #include guards to a header file is one way to make that file idempotent. Another construct to combat double inclusion is #pragma once, which is non-standard but nearly universally supported among C and C++ compilers.
     * [c++ - Is #pragma once a safe include guard? - Stack Overflow](https://stackoverflow.com/questions/787533/is-pragma-once-a-safe-include-guard)
+* C++ `#pragma once` ?
+    * The `#pragma once` directive is a preprocessor directive used in C++ to ensure that a header file is included only once in a single compilation, thus preventing multiple inclusions. This directive serves as an alternative to traditional include guards and helps to avoid problems associated with duplicate definitions and linking errors.
+    * How `#pragma once` Works
+        * When you place `#pragma once` at the top of a header file, it tells the compiler to include that file only once in the compilation process, no matter how many times it is included via #include statements in different parts of your code.
+    * Example
+        * Here's a simple example of how #pragma once is used in a header file:
+        ```cpp
+        // my_header.h
+        #pragma once
+        
+        class MyClass {
+        public:
+            void doSomething();
+        };
+        ```
+        * And then you might include this header file in multiple source files:
+        ```cpp
+        // main.cpp
+        #include "my_header.h"
+        #include "another_file.h"
+        
+        int main() {
+            MyClass obj;
+            obj.doSomething();
+            return 0;
+        }
+        
+        // another_file.h
+        #include "my_header.h"
+        ```
+        * In this scenario, my_header.h is included in main.cpp directly and indirectly via another_file.h. The #pragma once directive ensures that the compiler processes the contents of my_header.h only once, thereby avoiding multiple definition errors and reducing compilation overhead.
+    * Benefits of `#pragma once`
+        * Simplicity: It is simpler to write and read as compared to traditional include guards. There is no need to come up with unique macro names for include guards.
+        * Reduced Errors: Eliminates the possibility of mistakenly writing non-unique include guard names, which can lead to difficult-to-diagnose bugs.
+        * Efficiency: Potentially increases compilation speed, as the compiler might optimize the inclusion check more effectively than with include guards.
+    * Drawbacks
+        * Portability: #pragma once is widely supported by most modern compilers (like GCC, Clang, MSVC), but it is not officially part of the C++ standard, which means theoretically it might not be supported by all compilers.
+        * Filesystem Dependency: Some argue that its behavior can be problematic in complex build environments with symbolic links and multiple file systems, where the same physical file might be accessible through different paths.
+    * Comparing `#pragma once` and Include Guards
+        * Include guards are another way to prevent multiple inclusions, using `#ifndef, #define, and #endif` preprocessor commands:
+        ```cpp
+        // my_header.h
+        #ifndef MY_HEADER_H
+        #define MY_HEADER_H
+        
+        class MyClass {
+        public:
+            void doSomething();
+        };
+        
+        #endif // MY_HEADER_H
+        ```
+        * Include guards have the advantage of being part of the standard C++ preprocessor specifications, ensuring compatibility with all standards-compliant C++ compilers. However, they can be more cumbersome to maintain and slightly slower in comparison to #pragma once, depending on the compiler's optimization capabilities.
+    * Conclusion
+        * While `#pragma once` offers a clean and efficient solution for preventing multiple inclusions of header files, it's important to be aware of its non-standard status and potential issues in complex build setups. For most modern development environments, however, `#pragma once` is a popular choice due to its simplicity and effectiveness.
 
 #### Predefined macro names
 
