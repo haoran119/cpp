@@ -342,27 +342,6 @@
 		* 汇编（Assembly）
 		* 链接（Linking）
 
-#### make
-
-* [Makefile相关资料 - 浩然119 - 博客园](https://www.cnblogs.com/pegasus923/archive/2010/10/08/1846067.html)
-* [[ZZ]make命令与makefile文件的写法 - 浩然119 - 博客园](https://www.cnblogs.com/pegasus923/archive/2010/10/08/1846070.html)
-* [CMake - Wikipedia](https://en.wikipedia.org/wiki/CMake)
-	* [CMake Tutorial — CMake 3.23.0-rc2 Documentation](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
-	* [Examples | CMake](https://cmake.org/examples/)
-* [Top (GNU make)](https://www.gnu.org/software/make/manual/html_node/index.html#SEC_Contents)
-	* [Cleanup (GNU make)](https://www.gnu.org/software/make/manual/html_node/Cleanup.html)
-		* Compiling a program is not the only thing you might want to write rules for. Makefiles commonly tell how to do a few other things besides compiling a program: for example, how to delete all the object files and executables so that the directory is ‘clean’.
-		* Since clean is not a prerequisite of edit, this rule will not run at all if we give the command ‘make’ with no arguments. In order to make the rule run, we have to type ‘make clean’. See [How to Run make](https://www.gnu.org/software/make/manual/html_node/Running.html#Running).
-* [makefile - How to clean executable using make clean? - Ask Ubuntu](https://askubuntu.com/questions/433943/how-to-clean-executable-using-make-clean)
-* [Makefiles](https://web.eecs.umich.edu/~sugih/pointers/make.html)
-	* In this handout, we will take apart an example makefile and see how the pieces contribute to a working whole.
-	* The Cleanup Rule
-    ```sh
-    clean:
-        rm *.o prog3
-    ```
-	* This is an optional rule. It allows you to type 'make clean' at the command line to get rid of your object and executable files. Sometimes the compiler will link or compile files incorrectly and the only way to get a fresh start is to remove all the object and executable files.
-
 #### [GDB](https://en.wikipedia.org/wiki/GNU_Debugger)
 
 * [GDB (Step by Step Introduction) - GeeksforGeeks](https://www.geeksforgeeks.org/gdb-step-by-step-introduction/)
@@ -434,6 +413,99 @@
         * Then, exit GDB:
             * `quit`
     * These steps allow you to debug a live process on Linux using GDB effectively, providing powerful insights into runtime behavior and facilitating the diagnosis of complex issues.
+
+#### make
+
+* [Makefile相关资料 - 浩然119 - 博客园](https://www.cnblogs.com/pegasus923/archive/2010/10/08/1846067.html)
+* [[ZZ]make命令与makefile文件的写法 - 浩然119 - 博客园](https://www.cnblogs.com/pegasus923/archive/2010/10/08/1846070.html)
+* [CMake - Wikipedia](https://en.wikipedia.org/wiki/CMake)
+	* [CMake Tutorial — CMake 3.23.0-rc2 Documentation](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
+	* [Examples | CMake](https://cmake.org/examples/)
+* [Top (GNU make)](https://www.gnu.org/software/make/manual/html_node/index.html#SEC_Contents)
+	* [Cleanup (GNU make)](https://www.gnu.org/software/make/manual/html_node/Cleanup.html)
+		* Compiling a program is not the only thing you might want to write rules for. Makefiles commonly tell how to do a few other things besides compiling a program: for example, how to delete all the object files and executables so that the directory is ‘clean’.
+		* Since clean is not a prerequisite of edit, this rule will not run at all if we give the command ‘make’ with no arguments. In order to make the rule run, we have to type ‘make clean’. See [How to Run make](https://www.gnu.org/software/make/manual/html_node/Running.html#Running).
+* [makefile - How to clean executable using make clean? - Ask Ubuntu](https://askubuntu.com/questions/433943/how-to-clean-executable-using-make-clean)
+* [Makefiles](https://web.eecs.umich.edu/~sugih/pointers/make.html)
+	* In this handout, we will take apart an example makefile and see how the pieces contribute to a working whole.
+	* The Cleanup Rule
+    ```sh
+    clean:
+        rm *.o prog3
+    ```
+	* This is an optional rule. It allows you to type 'make clean' at the command line to get rid of your object and executable files. Sometimes the compiler will link or compile files incorrectly and the only way to get a fresh start is to remove all the object and executable files.
+* How to clean up and rebuild in cmake ?
+    * When working with CMake, cleaning up the build directory and rebuilding the project are common tasks, especially when you want to ensure that old build artifacts don't affect your current build. Here’s how you can effectively clean up and rebuild a project managed by CMake.
+    * Cleaning Up a CMake Build
+        * To clean up a CMake build, you typically need to remove the build directory and all its contents. CMake does not have a built-in clean command like Make, so you have to do it manually or script it. Here are some methods:
+            * Method 1: Delete the Build Directory
+                * This is the most straightforward method. Simply delete the entire build directory and recreate it. This ensures that all previous configurations, caches, and build artifacts are removed.
+                * Using Command Line:
+                ```bash
+                rm -rf /path/to/build-directory
+                mkdir /path/to/build-directory
+                cd /path/to/build-directory
+                cmake ..
+                make
+                ```
+            * Method 2: Using a Makefile Target
+                * If you are using the Unix Makefiles generator with CMake, you can use the make clean command to clean up most build artifacts, but this will not remove CMake-specific files (like CMakeCache.txt).
+                * Using Command Line:
+                ```bash
+                cd /path/to/build-directory
+                make clean
+                ```
+                * To remove CMake-specific files and ensure a completely clean start:
+                    * `rm -rf /path/to/build-directory/*`
+    * Rebuilding a CMake Project
+        * To rebuild a project from scratch, follow these steps:
+            * Clean the Build Directory: Use one of the methods above to clean your build directory.
+            * Re-run CMake: Navigate to your clean build directory and re-run the CMake configuration commands to generate fresh makefiles.
+            * Build the Project: Run your build command (like make, ninja, etc.) to compile the project.
+            * Example Sequence:
+            ```bash
+            # Assuming the build directory is `build` located in the project root
+            rm -rf build/
+            mkdir build
+            cd build
+            cmake ..
+            make
+            ```
+    * Automating Clean and Rebuild
+        * You can create a script to automate these steps, which can be helpful if you frequently need to rebuild from scratch. Here’s a simple Bash script example:
+        ```bash
+        #!/bin/bash
+        # Rebuild script for a CMake project
+        
+        # Define the build directory
+        BUILD_DIR="./build"
+        
+        # Check if the build directory exists, and clean it
+        if [ -d "$BUILD_DIR" ]; then
+            echo "Cleaning build directory..."
+            rm -rf "$BUILD_DIR/*"
+        else
+            echo "Creating build directory..."
+            mkdir "$BUILD_DIR"
+        fi
+        
+        # Navigate to the build directory
+        cd "$BUILD_DIR"
+        
+        # Run CMake configuration
+        echo "Configuring project..."
+        cmake ..
+        
+        # Build the project
+        echo "Building project..."
+        make
+        
+        echo "Build completed."
+        ```
+    * Considerations
+        * Platform Differences: The way you delete files and directories can vary by operating system. The examples above are for Unix-like systems (Linux, macOS). For Windows, you might use PowerShell or Command Prompt specific commands.
+        * CMake Generators: Depending on which generator you are using (Unix Makefiles, Ninja, Visual Studio, etc.), the build command might differ (make, ninja, msbuild).
+    * Cleaning up and rebuilding a project in CMake helps ensure that you are working with the most recent changes to your source code and build scripts, avoiding issues related to stale files and configurations.
 
 ### [CMAKE](https://cmake.org/)
 
