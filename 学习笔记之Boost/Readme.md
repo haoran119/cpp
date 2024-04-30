@@ -142,6 +142,57 @@ int main(int, char*[])
 
 #### [Wide character logging](https://www.boost.org/doc/libs/1_85_0/libs/log/doc/html/log/tutorial/wide_char.html)
 
+### MISC
+
+* Uses the Boost.Log library to initialize logging to a file with a specific format and logs a message with trace level severity
+```c++
+// g++ -o test -g -std=c++17 test.cpp -I/boost/ -L/boost/lib/ -lboost_log -lboost_log_setup -lboost_filesystem -lboost_system -lboost_thread -lpthread
+
+#include <boost/log/trivial.hpp>
+#include <boost/log/core.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+#include <boost/log/support/date_time.hpp>
+
+
+#define LOG_TRACE(logger, what) \
+    BOOST_LOG_SEV(logger, boost::log::trivial::trace) << what << "[" << __FILE__ << ":" << __LINE__ << "] "
+
+void init_logging()
+{
+    namespace logging = boost::log;
+    namespace src = boost::log::sources;
+    namespace keywords = boost::log::keywords;
+    namespace expr = boost::log::expressions;
+
+    logging::add_file_log(
+        keywords::file_name = "logfile.log",
+        keywords::format = (
+            expr::stream
+            << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S")
+            << ": <" << logging::trivial::severity
+            << "> " << expr::smessage
+            )
+    );
+
+    logging::add_common_attributes();
+}
+
+boost::log::sources::severity_logger<boost::log::trivial::severity_level> g_logger;
+
+int main()
+{
+    init_logging();
+
+    LOG_TRACE(g_logger, "This is a trace message showing where I'm logged from.");
+
+    return 0;
+}
+```
+
 ## [Boost.Python - 1.76.0](https://www.boost.org/doc/libs/1_76_0/libs/python/doc/html/index.html)
 
 * Welcome to Boost.Python, a C++ library which enables seamless interoperability between C++ and the Python programming language. The library includes support for:
