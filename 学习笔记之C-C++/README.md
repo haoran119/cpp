@@ -1254,6 +1254,19 @@ int main(){
         * Include guards have the advantage of being part of the standard C++ preprocessor specifications, ensuring compatibility with all standards-compliant C++ compilers. However, they can be more cumbersome to maintain and slightly slower in comparison to #pragma once, depending on the compiler's optimization capabilities.
     * Conclusion
         * While `#pragma once` offers a clean and efficient solution for preventing multiple inclusions of header files, it's important to be aware of its non-standard status and potential issues in complex build setups. For most modern development environments, however, `#pragma once` is a popular choice due to its simplicity and effectiveness.
+* [SF.8: Use #include guards for all header files](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#sf8-use-include-guards-for-all-header-files)
+    * `Reason` To avoid files being #included several times.
+        * In order to avoid include guard collisions, do not just name the guard after the filename. Be sure to also include a key and good differentiator, such as the name of library or component the header file is part of.
+    * `Example`
+        ```c++
+        // file foobar.h:
+        #ifndef LIBRARY_FOOBAR_H
+        #define LIBRARY_FOOBAR_H
+        // ... declarations ...
+        #endif // LIBRARY_FOOBAR_H
+        ```
+    * `Enforcement` Flag .h files without #include guards.
+    * `Note` Some implementations offer vendor extensions like `#pragma once` as alternative to include guards. `It is not standard and it is not portable`. It injects the hosting machine’s filesystem semantics into your program, in addition to locking you down to a vendor. `Our recommendation is to write in ISO C++`: See [rule P.2](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rp-Cplusplus).
 
 #### Predefined macro names
 
