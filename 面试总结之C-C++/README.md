@@ -334,6 +334,267 @@ std::shared_ptr<std::string> shared = std::make_unique<std::string>("test");
 * [解读C++即将迎来的重大更新（一）：C++20的四大新特性](https://mp.weixin.qq.com/s/QpqvZ3a7nFdHGjIBiKX67g)
     * https://www.modernescpp.com/index.php/thebigfour
 * [Google “战败”后，C++20 用微软的提案进入协程时代！](https://mp.weixin.qq.com/s/SlTObQQeDXvLLXuoxbO1yg)
+* Differences between C++17,20,23？
+    * C++17, C++20, and C++23 are the three most recent iterations of the C++ language, each introducing new features, enhancements, and fixes. Here's a breakdown of the key differences and additions between these versions.
+
+# 
+**C++17**
+
+C++17 brought many significant language and library features that improved developer productivity, simplicity, and compile-time operations. Some highlights include:
+
+# 
+**Key Language Features:**
+
+1. **Structured Bindings**:
+   - Allows decomposing tuple-like objects into individual names.
+   ```cpp
+   auto [x, y] = std::pair{1, 2}; // x = 1, y = 2
+   ```
+
+2. **If and Switch Statements with Initializers**:
+   - You can now declare variables directly inside `if` and `switch` statements.
+   ```cpp
+   if (int x = foo(); x > 0) { /* use x here */ }
+   ```
+
+3. **constexpr if**:
+   - Enables compile-time conditional code, reducing the need for SFINAE.
+   ```cpp
+   if constexpr (condition) { /* code */ }
+   ```
+
+4. **Fold Expressions**:
+   - Simplifies variadic template argument processing.
+   ```cpp
+   template<typename... Args> void print(Args... args) {
+       (std::cout << ... << args); // prints all args
+   }
+   ```
+
+5. **Inline Variables**:
+   - Variables declared `inline` can be defined in headers without violating the one-definition rule.
+   ```cpp
+   inline int global = 42;
+   ```
+
+6. **constexpr lambdas**:
+   - Lambdas can now be declared `constexpr`, enabling them to be evaluated at compile time.
+
+7. **Template Argument Deduction for Class Templates**:
+   - Deduction guides make it easier to instantiate class templates without specifying template parameters.
+   ```cpp
+   std::pair p(1, 2);  // Deduction of std::pair<int, int>
+   ```
+
+# 
+**Library Features:**
+
+1. **std::optional**:
+   - Encapsulates an optional value, replacing null pointers or error codes.
+   ```cpp
+   std::optional<int> maybeInt = 42;
+   ```
+
+2. **std::variant**:
+   - A type-safe union-like feature to store one of multiple types.
+   ```cpp
+   std::variant<int, float> var = 42;
+   ```
+
+3. **std::any**:
+   - A type-safe container for single values of any type.
+   ```cpp
+   std::any anything = 42;
+   ```
+
+4. **std::string_view**:
+   - Provides a non-owning view of a string to avoid unnecessary copying.
+   ```cpp
+   std::string_view sv = "Hello, World!";
+   ```
+
+5. **Parallel Algorithms**:
+   - Introduced parallel execution policies for standard algorithms.
+   ```cpp
+   std::sort(std::execution::par, v.begin(), v.end());
+   ```
+
+---
+
+# 
+**C++20**
+
+C++20 introduced one of the largest overhauls in C++ history since C++11. It includes major features that enhance metaprogramming, concurrency, and modularization.
+
+# 
+**Key Language Features:**
+
+1. **Concepts**:
+   - Concepts constrain template parameters with predicates that must be satisfied. They provide cleaner, more readable template code.
+   ```cpp
+   template<typename T> requires std::integral<T>
+   T add(T a, T b) { return a + b; }
+   ```
+
+2. **Ranges**:
+   - Ranges simplify the use of algorithms by decoupling them from iterators, working directly with ranges.
+   ```cpp
+   auto result = v | std::views::filter([](int i){ return i > 10; });
+   ```
+
+3. **Coroutines**:
+   - Introduced support for coroutines, allowing functions to be suspended and resumed, ideal for asynchronous tasks.
+   ```cpp
+   generator<int> foo() { co_yield 1; co_yield 2; }
+   ```
+
+4. **Modules**:
+   - A long-awaited feature, modules break up code into well-defined components, improving compile times and the stability of large codebases.
+   ```cpp
+   export module MyModule;
+   ```
+
+5. **Three-way Comparison (`<=>`) - The "Spaceship Operator"**:
+   - Simplifies comparison between objects by automatically generating comparison operators.
+   ```cpp
+   bool result = a <=> b == 0;  // Equivalent to (a == b)
+   ```
+
+6. **Constexpr Improvements**:
+   - More functions (including the standard library) can be marked `constexpr`, allowing more compile-time evaluations.
+   ```cpp
+   constexpr int factorial(int n) {
+       if (n <= 1) return 1;
+       else return n * factorial(n - 1);
+   }
+   ```
+
+7. **`[[likely]]` and `[[unlikely]]` Attributes**:
+   - These attributes allow you to give hints to the compiler about which branches are more likely to be taken.
+   ```cpp
+   if ([[likely]] x > 0) { /* ... */ }
+   ```
+
+8. **Designated Initializers**:
+   - You can now initialize specific members of a struct.
+   ```cpp
+   Point p = {.x = 1, .y = 2};
+   ```
+
+# 
+**Library Features:**
+
+1. **Calendar and Time Zones**:
+   - New `std::chrono` features for calendrical and time zone manipulation.
+   ```cpp
+   using namespace std::chrono;
+   auto today = year{2023} / January / 1d;
+   ```
+
+2. **std::span**:
+   - A lightweight view over a contiguous array of elements.
+   ```cpp
+   std::span<int> s(arr, 5);
+   ```
+
+3. **Enhanced Concurrency**:
+   - C++20 improves concurrency primitives with new features like atomic `wait` and `notify`.
+   ```cpp
+   atomic<int> counter;
+   counter.wait(0);  // Wait for counter to change
+   ```
+
+4. **`std::format`**:
+   - Provides Python-style string formatting.
+   ```cpp
+   std::string s = std::format("Hello, {}!", "World");
+   ```
+
+---
+
+# 
+**C++23**
+
+C++23, the latest finalized standard, builds upon C++20 with further refinements and some notable additions, particularly focusing on fixing inconsistencies, improving usability, and expanding on earlier features.
+
+# 
+**Key Language Features:**
+
+1. **Deduction Guides for `std::pair` and `std::tuple`**:
+   - Simplifies instantiations by inferring types automatically.
+   ```cpp
+   std::pair p{1, 2};  // Automatic deduction
+   ```
+
+2. **Multidimensional `std::views::cartesian_product`**:
+   - Provides easier handling of Cartesian products in ranges.
+   ```cpp
+   auto v = std::views::cartesian_product(v1, v2);
+   ```
+
+3. **`constexpr` for `std::vector` and `std::string`**:
+   - `std::vector` and `std::string` can now be used in constant expressions.
+   ```cpp
+   constexpr std::vector<int> vec = {1, 2, 3};
+   ```
+
+4. **`std::optional` Improvements**:
+   - You can now access the value of an `optional` or a default value with `value_or`.
+   ```cpp
+   std::optional<int> opt = std::nullopt;
+   int value = opt.value_or(10);  // value = 10
+   ```
+
+5. **if consteval**:
+   - Refines compile-time vs run-time decision-making.
+   ```cpp
+   if consteval {
+       // Compile-time only code
+   } else {
+       // Run-time only code
+   }
+   ```
+
+# 
+**Library Features:**
+
+1. **`std::expected`**:
+   - A way to represent values that may either contain a value or an error, improving error handling.
+   ```cpp
+   std::expected<int, std::string> divide(int a, int b) {
+       if (b == 0) return std::unexpected("Division by zero");
+       return a / b;
+   }
+   ```
+
+2. **`std::flat_map` and `std::flat_set`**:
+   - Sorted associative containers that store data in contiguous memory, improving cache locality and lookup performance in some scenarios.
+
+3. **std::views::zip**:
+   - A way to iterate over multiple ranges simultaneously.
+   ```cpp
+   auto zipped = std::views::zip(v1, v2);
+   ```
+
+4. **Improved `std::format`**:
+   - Additional formatting options and custom formatters, making `std::format` even more powerful.
+
+5. **Range Adaptors like `std::views::chunk`**:
+   - Provides utilities for working with ranges in more intuitive ways.
+   ```cpp
+   auto chunks = std::views::chunk(v, 2); // Chunk the range into subranges of 2
+   ```
+
+---
+
+# 
+**Summary of Key Differences**:
+
+| Feature                           | C++17                        | C++20                               | C++23                              |
+|------------------------------------|------------------------------|-------------------------------------|------------------------------------|
+| **Structured Bindings**            | Yes                          | Yes                                 | Yes                                |
+| **Concepts**                       | No                           | Yes                                 | Yes                                |
+| **Ranges**                         | No                           | Yes                                 | Yes (improvements
 
 ## 关键字库函数
 
