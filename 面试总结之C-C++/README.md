@@ -334,8 +334,10 @@ std::shared_ptr<std::string> shared = std::make_unique<std::string>("test");
 * [解读C++即将迎来的重大更新（一）：C++20的四大新特性](https://mp.weixin.qq.com/s/QpqvZ3a7nFdHGjIBiKX67g)
     * https://www.modernescpp.com/index.php/thebigfour
 * [Google “战败”后，C++20 用微软的提案进入协程时代！](https://mp.weixin.qq.com/s/SlTObQQeDXvLLXuoxbO1yg)
-* Differences between C++17,20,23？
-    * C++17, C++20, and C++23 are the three most recent iterations of the C++ language, each introducing new features, enhancements, and fixes. Here's a breakdown of the key differences and additions between these versions.
+
+#### Differences between C++17,20,23？
+
+* C++17, C++20, and C++23 are the three most recent iterations of the C++ language, each introducing new features, enhancements, and fixes. Here's a breakdown of the key differences and additions between these versions.
 
 # 
 **C++17**
